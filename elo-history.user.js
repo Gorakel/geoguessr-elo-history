@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Ranked Elo History
 // @namespace    https://www.geoguessr.com/
-// @version      1.0.1
+// @version      1.0.2
 // @description  Shows a timeline of your overall Elo (ratingBefore / ratingAfter) from your ranked Duels.
 // @icon         data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E
 // @author       Gorakel
