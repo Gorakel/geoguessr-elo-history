@@ -2,8 +2,6 @@
 
 A userscript that adds an interactive timeline of your overall **Elo rating** to GeoGuessr, based on your ranked Duels (`ratingBefore` / `ratingAfter`).
 
-![version](https://img.shields.io/badge/version-1.0.2-blue) ![license](https://img.shields.io/badge/license-MIT-green)
-
 ## Features
 
 - 📈 **Elo timeline** drawn as a line chart (Chart.js) with zoom and pan
