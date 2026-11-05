@@ -1,0 +1,1 @@
+# geoguessr-elo-history
