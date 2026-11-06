@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Ranked Elo History
 // @namespace    https://www.geoguessr.com/
-// @version      1.0.3
+// @version      1.0.4
 // @description  Shows a timeline of your overall Elo (ratingBefore / ratingAfter) from your ranked Duels.
 // @icon         data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E
 // @author       Gorakel
@@ -585,6 +585,32 @@
 	#elo-debug { display: none; flex: 1; overflow: auto; margin: 0; padding: 8px; background: #11111f; border-radius: 6px; user-select: text; white-space: pre-wrap; }
 	`;
 
+    // const PANEL_HTML = `
+    // 	<button id="elo-close" title="Close">✕</button>
+    // 	<div class="bar">
+    // 		<button id="elo-update">Update</button>
+    // 		<button id="elo-reload">Reload all</button>
+    // 		<label>From <input type="date" id="elo-from"></label>
+    // 		<label>To <input type="date" id="elo-to"></label>
+    // 		<button id="elo-reset-dates">Reset dates</button>
+    // 		<select id="elo-mode"></select>
+    // 		<select id="elo-x">
+    // 			<option value="day">X: Time (per day, smoothed)</option>
+    // 			<option value="game">X: Time (per game)</option>
+    // 			<option value="index">X: Game number</option>
+    // 		</select>
+    // 		<button id="elo-zoom-in" title="Zoom in">＋</button>
+    // 		<button id="elo-zoom-out" title="Zoom out">－</button>
+    // 		<button id="elo-zoom-reset">Reset zoom</button>
+    // 		<button id="elo-csv">CSV</button>
+    // 		<button id="elo-debug-btn">Debug</button>
+    // 		<span id="elo-status"></span>
+    // 	</div>
+    // 	<div id="elo-stats"></div>
+    // 	<pre id="elo-debug"></pre>
+    // 	<div id="elo-chart-box"><canvas id="elo-canvas"></canvas></div>
+    // `;
+
     const PANEL_HTML = `
 		<button id="elo-close" title="Close">✕</button>
 		<div class="bar">
@@ -593,7 +619,6 @@
 			<label>From <input type="date" id="elo-from"></label>
 			<label>To <input type="date" id="elo-to"></label>
 			<button id="elo-reset-dates">Reset dates</button>
-			// <select id="elo-mode"></select>
 			<select id="elo-x">
 				<option value="day">X: Time (per day, smoothed)</option>
 				<option value="game">X: Time (per game)</option>
