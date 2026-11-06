@@ -419,7 +419,7 @@
         if (!$("elo-panel").classList.contains("open")) return;
         if (!keepZoom) zoomView = null;
 
-        updateModeDropdown();
+        // updateModeDropdown();
         const list = filteredGames();
         showStats(list);
         showChart(list);
@@ -672,7 +672,9 @@
         };
 
         // Filters: save them and redraw whenever one changes
-        for (const id of ["elo-from", "elo-to", "elo-mode", "elo-x"]) {
+        // for (const id of ["elo-from", "elo-to", "elo-mode", "elo-x"]) {
+        for (const id of ["elo-from", "elo-to", "elo-x"]) {
+
             $(id).onchange = onFilterChange;
         }
     }
@@ -680,7 +682,7 @@
     function onFilterChange() {
         settings.from = $("elo-from").value;
         settings.to = $("elo-to").value;
-        settings.mode = $("elo-mode").value;
+        // settings.mode = $("elo-mode").value;
         settings.x = $("elo-x").value;
         saveSettings();
         render();
