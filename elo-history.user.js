@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Ranked Elo History
 // @namespace    https://www.geoguessr.com/
-// @version      1.0.9
+// @version      1.0.10
 // @description  Shows a timeline of your overall Elo (ratingBefore / ratingAfter) from your ranked Duels.
 // @icon         data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E
 // @author       Gorakel
@@ -59,6 +59,17 @@
 
     const $ = (id) => document.getElementById(id);
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    // Format a timestamp as YYYY-MM-DD (local time) or YYYY-MM-DD HH:MM:SS
+    const pad = (n) => String(n).padStart(2, "0");
+    const fmtDate = (ms) => {
+        const d = new Date(ms);
+        return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+    };
+    const fmtDateTime = (ms) => {
+        const d = new Date(ms);
+        return fmtDate(ms) + " " + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
+    };
 
     // All games we know, stored as { gameId: record }. A record looks like this:
     //   { v: version, id, t: start time (ms), tb: elo before, ta: elo after,
@@ -506,7 +517,8 @@
                         ticks: {
                             color: "#fff",
                             maxTicksLimit: 10,
-                            callback: (value) => (settings.x === "index" ? value : new Date(value).toLocaleDateString("en-GB")),
+                            // callback: (value) => (settings.x === "index" ? value : new Date(value).toLocaleDateString("en-GB")),
+                            callback: (value) => (settings.x === "index" ? value : fmtDate(value)),
                         },
                         grid: { color: "rgba(255,255,255,.08)" },
                     },
@@ -518,8 +530,9 @@
 
     function tooltipTitle(items) {
         const point = items[0].raw;
-        const date = new Date(point.game.t);
-        return point.day ? date.toLocaleDateString("en-GB") : date.toLocaleString("en-GB");
+        // const date = new Date(point.game.t);
+        // return point.day ? date.toLocaleDateString("en-GB") : date.toLocaleString("en-GB");
+        return point.day ? fmtDate(point.game.t) : fmtDateTime(point.game.t);
     }
 
     function tooltipLines(item) {
@@ -719,6 +732,7 @@
 
         const perMonth = {};
         for (const g of usableGames()) {
+            // const month = new Date(g.t).toISOString().slice(0, 7);
             const month = new Date(g.t).toISOString().slice(0, 7);
             perMonth[month] = (perMonth[month] || 0) + 1;
         }
