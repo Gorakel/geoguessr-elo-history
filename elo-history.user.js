@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Ranked Elo History
 // @namespace    https://www.geoguessr.com/
-// @version      1.0.11
+// @version      2.0.0
 // @description  Shows a timeline of your overall Elo (ratingBefore / ratingAfter) from your ranked Duels.
 // @icon         data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E
 // @author       Gorakel
@@ -296,13 +296,17 @@
 
         try {
             const myUserId = await getMyUserId();
+            // if (reloadAll) {
+            //     games = {};
+            //     GM_setValue(KEY_FEED_COMPLETE, false);
+            // }
             if (reloadAll) {
-                games = {};
-                GM_setValue(KEY_FEED_COMPLETE, false);
+                GM_setValue(KEY_FEED_COMPLETE, false);   // keep the cache, only re-read the whole feed
             }
 
             const feed = await loadFeed(setStatus);
-            const todo = feed.filter((d) => !isLoaded(d.gameId));
+            // const todo = feed.filter((d) => !isLoaded(d.gameId));
+            const todo = reloadAll ? feed : feed.filter((d) => !isLoaded(d.gameId));
 
             // Counters for the Debug view: why were games skipped?
             const counts = { loaded: 0, notFinished: 0, notUsable: 0, notFound: 0, otherErrors: {}, skipped: [] };
@@ -617,6 +621,8 @@
     		<button id="elo-zoom-out" title="Zoom out">－</button>
     		<button id="elo-zoom-reset">Reset zoom</button>
     		<button id="elo-csv">CSV</button>
+            <button id="elo-export">Backup</button>
+            <button id="elo-import">Restore</button>
     		<button id="elo-debug-btn">Debug</button>
     		<span id="elo-status"></span>
     	</div>
@@ -647,7 +653,7 @@
         $("elo-close").onclick = () => panel.classList.remove("open");
         $("elo-update").onclick = () => update(setStatus, false);
         $("elo-reload").onclick = () => {
-            if (confirm("Delete the cache and reload all ranked duels? This can take a while.")) update(setStatus, true);
+            if (confirm("Reload all ranked duels? This can take a while. Cache is not deleted.")) update(setStatus, true);
         };
         $("elo-zoom-in").onclick = () => zoomBy(1.4);
         $("elo-zoom-out").onclick = () => zoomBy(1 / 1.4);
@@ -698,6 +704,46 @@
         link.download = "ranked-elo.csv";
         link.click();
         URL.revokeObjectURL(link.href);
+    }
+
+    // Save ALL stored records (also games that are no longer in the feed) as a JSON backup
+    function exportData() {
+        const data = { app: "ranked-elo", format: 1, exported: new Date().toISOString(), games: games };
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: "application/json" }));
+        link.download = "ranked-elo-backup-" + fmtDate(Date.now()) + ".json";
+        link.click();
+        URL.revokeObjectURL(link.href);
+    }
+
+    // Merge a backup file into the current cache (nothing gets deleted or overwritten blindly)
+    function importData() {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".json,application/json";
+        input.onchange = async () => {
+            const file = input.files[0];
+            if (!file) return;
+            try {
+                const data = JSON.parse(await file.text());
+                const imported = data.games || {};
+                let added = 0;
+                for (const id in imported) {
+                    const old = games[id];
+                    // take the record if we don't have it, or if ours is outdated and the backup's is current
+                    if (!old || (old.v !== RECORD_VERSION && imported[id].v === RECORD_VERSION)) {
+                        games[id] = imported[id];
+                        added++;
+                    }
+                }
+                saveGames();
+                render(true);
+                $("elo-status").textContent = `Restore done: ${added} records added.`;
+            } catch (e) {
+                $("elo-status").textContent = "Restore failed: invalid file";
+            }
+        };
+        input.click();
     }
 
     // Show / hide a text report that helps to find out why games might be missing
