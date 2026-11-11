@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoGuessr Ranked Elo History
 // @namespace    https://www.geoguessr.com/
-// @version      2.0.0
+// @version      2.0.1
 // @description  Shows a timeline of your overall Elo (ratingBefore / ratingAfter) from your ranked Duels.
 // @icon         data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%3E%3Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%3E%F0%9F%93%88%3C%2Ftext%3E%3C%2Fsvg%3E
 // @author       Gorakel
@@ -665,6 +665,8 @@
             $("elo-to").value = "";
             onFilterChange();
         };
+        $("elo-export").onclick = exportData;
+        $("elo-import").onclick = importData;
 
         // Filters: save them and redraw whenever one changes
         // for (const id of ["elo-from", "elo-to", "elo-mode", "elo-x"]) {
